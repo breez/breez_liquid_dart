@@ -16,7 +16,7 @@ use boltz_client::{
         },
         liquid::{LBtcSwapScript, LBtcSwapTx},
     },
-    util::secrets::{LBtcReverseRecovery, LiquidSwapKey, Preimage, SwapKey},
+    util::secrets::{LiquidSwapKey, Preimage, SwapKey},
     Bolt11Invoice, Keypair,
 };
 use log::{debug, error, warn};
@@ -35,6 +35,8 @@ use crate::wrapper::model::{
     PrepareReceiveResponse, PrepareSendResponse, ReceivePaymentResponse, SendPaymentResponse,
     WalletInfo, WalletOptions,
 };
+
+pub(crate) use boltz_client::util::secrets::LBtcReverseRecovery;
 
 // To avoid sendrawtransaction error "min relay fee not met"
 const CLAIM_ABSOLUTE_FEES: u64 = 134;
