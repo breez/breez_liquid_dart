@@ -1,0 +1,24 @@
+[workspace]
+members = ["breez-liquid-wrapper"]
+resolver = "2"
+
+[workspace.package]
+version = "0.0.1"
+
+[workspace.dependencies]
+anyhow = "1.0"
+thiserror = "1.0"
+uniffi = "0.27.1"
+uniffi_macros = "0.27.1"
+
+[patch.crates-io]
+secp256k1-zkp = {git = "https://github.com/BlockstreamResearch/rust-secp256k1-zkp.git", rev = "60e631c24588a0c9e271badd61959294848c665d"}
+
+[profile.release]
+lto = "thin"
+strip = "symbols"
+
+[profile.min]
+inherits = "release"
+lto = true
+opt-level = "z"
