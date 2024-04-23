@@ -3,8 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await initialize();
+  await initializeWallet();
   runApp(const MyApp());
+}
+
+const String mnemonic = "";
+
+Future initializeWallet() async {
+  assert(mnemonic.isNotEmpty, "Please enter your mnemonic.");
+  final dataDir = await getApplicationDocumentsDirectory();
+  await init(
+    mnemonic: mnemonic,
+    dataDir: dataDir.path,
+    network: Network.liquid,
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -15,18 +29,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  static const String mnemonic =
-      "cute gallery debris flame service used expect poverty clarify window demise slim";
-
-  Future<Wallet> _initializeWallet() async {
-    final dataDir = await getApplicationDocumentsDirectory();
-    return (await Wallet.init(
-      mnemonic: mnemonic,
-      dataDir: dataDir.path,
-      network: Network.liquid,
-    )) as Wallet;
-  }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -36,40 +38,141 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Padding(
           padding: const EdgeInsets.all(10),
-          child: FutureBuilder<Wallet>(
-            future: _initializeWallet(),
-            initialData: null,
-            builder: (context, walletSnapshot) {
-              if (walletSnapshot.hasError) {
-                return Text('Error: ${walletSnapshot.error}');
-              }
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                FutureBuilder<WalletInfo>(
+                  future: getInfo(withScan: false),
+                  initialData: null,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    }
 
-              if (!walletSnapshot.hasData) {
-                return const Text('Loading...');
-              }
-              final wallet = walletSnapshot.data!;
+                    if (!snapshot.hasData) {
+                      return const Text('Loading...');
+                    }
 
-              return FutureBuilder<WalletInfo>(
-                future: wallet.getInfo(withScan: false),
-                initialData: null,
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  }
+                    if (snapshot.requireData.balanceSat.isNaN) {
+                      return const Text('No balance.');
+                    }
+                    final walletInfo = snapshot.data!;
 
-                  if (!snapshot.hasData) {
-                    return const Text('Loading...');
-                  }
+                    return Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Text(
+                            "Balance",
+                            style: Theme.of(context).textTheme.headlineSmall,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 32.0),
+                          child: Center(
+                            child: Text(
+                              "${walletInfo.balanceSat} sats",
+                              style: Theme.of(context).textTheme.headlineSmall,
+                            ),
+                          ),
+                        ),
+                        ListTile(
+                          title: Text(
+                            "pubKey: ${walletInfo.pubkey}",
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+                const SizedBox(height: 16.0),
+                FutureBuilder<PrepareReceiveResponse>(
+                  future: prepareReceivePayment(
+                    req: const PrepareReceiveRequest(
+                      receiverAmountSat: 1000,
+                    ),
+                  ),
+                  initialData: null,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    }
 
-                  if (snapshot.requireData.balanceSat.isNaN) {
-                    return const Text('No balance.');
-                  }
-                  final walletInfo = snapshot.data!;
+                    if (!snapshot.hasData) {
+                      return const Text('Loading...');
+                    }
 
-                  return Text("Balance: ${walletInfo.balanceSat}\npubKey: ${walletInfo.pubkey}");
-                },
-              );
-            },
+                    if (snapshot.requireData.pairHash.isEmpty) {
+                      return const Text('No pair hash.');
+                    }
+                    final prepareReceiveResponse = snapshot.data!;
+                    debugPrint(prepareReceiveResponse.pairHash);
+
+                    return Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Text(
+                            "Preparing a receive payment of 1000 sats",
+                            style: Theme.of(context).textTheme.headlineSmall,
+                          ),
+                        ),
+                        ListTile(
+                          title: Text("Pair Hash: ${prepareReceiveResponse.pairHash}"),
+                        ),
+                        ListTile(
+                          title: Text("Payer Amount: ${prepareReceiveResponse.payerAmountSat} (in sats)"),
+                        ),
+                        ListTile(
+                          title: Text("Fees: ${prepareReceiveResponse.feesSat} (in sats)"),
+                        ),
+                        const SizedBox(height: 16.0),
+                        FutureBuilder<ReceivePaymentResponse>(
+                          future: receivePayment(req: prepareReceiveResponse),
+                          initialData: null,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              return Text('Error: ${snapshot.error}');
+                            }
+
+                            if (!snapshot.hasData) {
+                              return const Text('Loading...');
+                            }
+
+                            if (snapshot.requireData.id.isEmpty) {
+                              return const Text('Missing invoice id');
+                            }
+
+                            final receivePaymentResponse = snapshot.data!;
+                            debugPrint("Invoice ID: ${receivePaymentResponse.id}");
+                            debugPrint("Invoice: ${receivePaymentResponse.invoice}");
+
+                            return Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                  child: Text(
+                                    "Invoice for receive payment of 1000 sats",
+                                    style: Theme.of(context).textTheme.headlineSmall,
+                                  ),
+                                ),
+                                ListTile(
+                                  title: Text("Invoice ID: ${receivePaymentResponse.id}"),
+                                ),
+                                ListTile(
+                                  title: Text("Invoice: ${receivePaymentResponse.invoice}"),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
