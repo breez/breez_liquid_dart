@@ -1,6 +1,7 @@
 /// Dart bindings for the Breez Liquid library.
 library;
 
+export 'src/wrapper/binding.dart';
 export 'src/wrapper/model.dart';
 export 'src/wrapper/wallet.dart';
 

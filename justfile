@@ -9,7 +9,7 @@ gen:
 
 # builds the local library for testing
 build *args:
-	cargo build --manifest-path breez-liquid-wrapper/Cargo.toml {{args}}
+	cargo build --manifest-path breez_liquid_wrapper/Cargo.toml {{args}}
 
 build-apple *args:
 	dart scripts/build_apple.dart {{args}}
@@ -29,11 +29,13 @@ test-dart: build
 
 # softlinks library archives from platform-build to their expected locations
 link:
-	-ln -sf $(pwd)/platform-build/BreezLiquidWrapper.xcframework.zip packages/flutter_breez_liquid/macos/Frameworks/{{curr_version}}.zip
-	-ln -sf $(pwd)/platform-build/BreezLiquidWrapper.xcframework.zip packages/flutter_breez_liquid/ios/Frameworks/{{curr_version}}.zip
+	-ln -sf $(pwd)/platform-build/breez_liquid_wrapper.xcframework.zip packages/flutter_breez_liquid/macos/Frameworks/{{curr_version}}.zip
+	-ln -sf $(pwd)/platform-build/breez_liquid_wrapper.xcframework.zip packages/flutter_breez_liquid/ios/Frameworks/{{curr_version}}.zip
 	-ln -sf $(pwd)/platform-build/other.tar.gz packages/flutter_breez_liquid/linux/{{curr_version}}.tar.gz
 	-ln -sf $(pwd)/platform-build/other.tar.gz packages/flutter_breez_liquid/windows/{{curr_version}}.tar.gz
 	-ln -sf $(pwd)/platform-build/android.tar.gz packages/flutter_breez_liquid/android/{{curr_version}}.tar.gz
+	-ln -sf $(pwd)/breez_liquid_wrapper/include/breez_liquid_wrapper.h packages/flutter_breez_liquid/ios/Classes/breez_liquid_wrapper.h
+	-ln -sf $(pwd)/breez_liquid_wrapper/include/breez_liquid_wrapper.h packages/flutter_breez_liquid/macos/Classes/breez_liquid_wrapper.h
 
 # (melos)
 test-flutter: build-apple build-android build-other

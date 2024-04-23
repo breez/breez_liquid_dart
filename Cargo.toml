@@ -1,5 +1,5 @@
 [workspace]
-members = ["breez-liquid-wrapper"]
+members = ["breez_liquid_wrapper"]
 resolver = "2"
 
 [workspace.package]

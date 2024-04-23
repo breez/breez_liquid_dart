@@ -3,6 +3,6 @@
 
 // BreezLiquidWrapper initApi({String? profile}) {
 //   return BreezLiquidWrapper.wasm(WasmModule.initialize(
-//     kind: const Modules.noModules(root: 'pkg/breez-liquid-wrapper'),
+//     kind: const Modules.noModules(root: 'pkg/breez_liquid_wrapper'),
 //   ));
 // }

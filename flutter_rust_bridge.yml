@@ -1,7 +1,7 @@
-rust_input: breez-liquid-wrapper/src/wrapper/*.rs
+rust_input: breez_liquid_wrapper/src/wrapper/*.rs
 dart_output: packages/breez_liquid/lib/src
-rust_output: breez-liquid-wrapper/src/bridge.rs
-c_output: breez-liquid-wrapper/include/breez_liquid_wrapper.h
+rust_output: breez_liquid_wrapper/src/bridge.rs
+c_output: breez_liquid_wrapper/include/breez_liquid_wrapper.h
 duplicated_c_output: [packages/flutter_breez_liquid/macos/Classes/breez_liquid_wrapper.h, packages/flutter_breez_liquid/ios/Classes/breez_liquid_wrapper.h]
 web: false
 full_dep: true

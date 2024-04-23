@@ -6,6 +6,8 @@ use serde::Serialize;
 
 use crate::get_invoice_amount;
 
+use super::error::LsSdkError;
+
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum Network {
     Liquid,
@@ -161,6 +163,22 @@ impl From<lwk_signer::SignerError> for PaymentError {
             _ => PaymentError::SignerError {
                 err: format!("{err:?}"),
             },
+        }
+    }
+}
+
+impl From<anyhow::Error> for PaymentError {
+    fn from(err: anyhow::Error) -> Self {
+        Self::Generic {
+            err: err.to_string(),
+        }
+    }
+}
+
+impl From<LsSdkError> for PaymentError {
+    fn from(err: LsSdkError) -> Self {
+        Self::Generic {
+            err: err.to_string(),
         }
     }
 }

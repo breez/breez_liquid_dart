@@ -7,10 +7,10 @@ packages:
 commands:
   bootstrap:
     hooks:
-      post: cargo check --manifest-path breez-liquid-wrapper/Cargo.toml
+      post: cargo check --manifest-path breez_liquid_wrapper/Cargo.toml
   clean:
     hooks:
-      pre: cargo clean --manifest-path breez-liquid-wrapper/Cargo.toml
+      pre: cargo clean --manifest-path breez_liquid_wrapper/Cargo.toml
   version:
     hooks:
       preCommit: bash scripts/version.sh

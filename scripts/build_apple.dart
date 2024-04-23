@@ -7,12 +7,12 @@ import 'package:cli_script/cli_script.dart';
 
 import 'utils.dart';
 
-const framework = 'BreezLiquidWrapper.xcframework';
+const framework = 'breez_liquid_wrapper.xcframework';
 const frameworkZip = '$framework.zip';
 const libName = 'libbreez_liquid_wrapper.a';
 const iosSimLipo = 'ios-sim-lipo/$libName';
 const macLipo = 'mac-lipo/$libName';
-const headers = '../breez-liquid-wrapper/include';
+const headers = '../breez_liquid_wrapper/include';
 const buildDir = 'platform-build';
 
 Future<void> mainImpl(List<String> args) async {
