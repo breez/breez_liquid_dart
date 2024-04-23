@@ -31,3 +31,5 @@ build/
 
 # flutter_rust_bridge_codegen related
 lib/flutter_breez_liquid_bindings_generated.dart
+ios/Classes/breez_liquid_wrapper.h
+macos/Classes/breez_liquid_wrapper.h
