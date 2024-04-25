@@ -4,8 +4,13 @@ frb_bin := "flutter_rust_bridge_codegen generate"
 export CARGO_TERM_COLOR := "always"
 
 # generate bindings
-gen:
+gen: codegen && ffigen
+
+codegen:
 	{{frb_bin}}
+
+ffigen:
+	cd packages/flutter_breez_liquid/ && flutter pub run ffigen --config ffigen.yaml && cd ..
 
 # builds the local library for testing
 build *args:
@@ -59,6 +64,3 @@ check:
 # Open melos.yaml
 melos:
 	@$EDITOR melos.yaml
-
-ffigen:
-	cd packages/flutter_breez_liquid/ && flutter pub run ffigen --config ffigen.yaml && cd ..
