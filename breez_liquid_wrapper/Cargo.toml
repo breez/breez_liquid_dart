@@ -14,7 +14,6 @@ bip39 = { version = "2.0.0", features = ["serde"] }
 boltz-client = { git = "https://github.com/SatoshiPortal/boltz-rust", rev = "e55b8439f3311be7fcd18ec14a5747d0f3dbd74f" }
 flutter_rust_bridge = { version = "=2.0.0-dev.32", features = ["chrono"] }
 log = "0.4.20"
-once_cell = "1"
 lwk_common = "0.3.0"
 lwk_signer = "0.3.0"
 lwk_wollet = "0.3.0"
